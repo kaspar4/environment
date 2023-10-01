@@ -3,3 +3,19 @@
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 echo "Script directory: $SCRIPT_DIR"
+
+UNO_ROLES_DIR=$(realpath ${SCRIPT_DIR}/../../infra/ansible/roles/)
+EXPORTED_ROLES_DIR=$(realpath ${SCRIPT_DIR}/roles/)
+
+if [[ -d ${EXPORTED_ROLES_DIR} ]]; then
+    ANSIBLE_ROLES=${EXPORTED_ROLES_DIR}
+elif [[ -d ${UNO_ROLES_DIR} ]]; then
+    ANSIBLE_ROLES=${UNO_ROLES_DIR}
+else
+    echo "Cannot find a valid ansible role directory"
+    exit 1
+fi
+PLAYBOOK=$(realpath ${ANSIBLE_ROLES}/../playbooks/dev-environment/laptop.yaml)
+
+echo "Ansible roles: $ANSIBLE_ROLES"
+ANSIBLE_ROLES_PATH=${ANSIBLE_ROLES} ansible-playbook -v ${PLAYBOOK}

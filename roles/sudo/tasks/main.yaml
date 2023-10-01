@@ -2,6 +2,6 @@
   community.general.sudoers:
     name: allow-all-sudo
     state: present
-    user: "mav"
+    user: "{{ lookup('env','USER') }}"
     commands: ALL
     nopassword: true
