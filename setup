@@ -1,0 +1,5 @@
+#!/bin/bash
+# Ehi, Emacs, this is -*- shell-script -*-
+
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+echo "Script directory: $SCRIPT_DIR"
