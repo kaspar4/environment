@@ -17,5 +17,16 @@ else
 fi
 PLAYBOOK=$(realpath ${ANSIBLE_ROLES}/../playbooks/dev-environment/laptop.yaml)
 
+sudo apt-get install ansible
+
+# Later we'll do something like this, but we need to have a way to generate a top-level
+# requirements.yaml from all others and export only the subset used here
+# (
+#     cd ${SCRIPT_DIR}
+#     ansible-galaxy install -r requirements.yaml
+# )
+# for now
+ansible-galaxy collection install community.general
+
 echo "Ansible roles: $ANSIBLE_ROLES"
 ANSIBLE_ROLES_PATH=${ANSIBLE_ROLES} ansible-playbook -v ${PLAYBOOK}
