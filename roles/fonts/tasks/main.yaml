@@ -4,7 +4,14 @@
   ansible.builtin.apt:
     pkg:
       - wget
+      - python3-pip
+
   become: true
+
+- name: Install python packages
+  ansible.builtin.pip:
+    name:
+      - wget
 
 - name: "Install fonts"
   include_tasks: "download_font_family.yaml"
