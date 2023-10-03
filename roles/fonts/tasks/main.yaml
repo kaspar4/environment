@@ -5,7 +5,6 @@
     pkg:
       - wget
       - python3-pip
-
   become: true
 
 - name: Install python packages
