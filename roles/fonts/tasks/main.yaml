@@ -1,5 +1,10 @@
 ---
 
+- name: Install packages for font install
+  ansible.builtin.apt:
+    pkg:
+      - wget
+
 - name: "Install fonts"
   include_tasks: "download_font_family.yaml"
   loop: "{{font_families}}"

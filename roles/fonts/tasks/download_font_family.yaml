@@ -10,7 +10,11 @@
     path: "{{font_base_directory}}/{{source}}/{{family}}"
   register: font_dir
 
+- name: "Directory"
+  ansible.builtin.command:
+    cmd: ls -lR
+
 - name: "Download {{family}} [from {{source}} fonts]"
   ansible.builtin.command:
-    cmd: ./roles/fonts/scripts/download '{{ item }}' '{{ font_base_directory }}'
+    cmd: ../roles/fonts/scripts/download '{{ item }}' '{{ font_base_directory }}'
   when: not font_dir.stat.exists
