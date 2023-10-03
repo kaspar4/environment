@@ -7,6 +7,9 @@ echo "Script directory: $SCRIPT_DIR"
 UNO_ROLES_DIR=$(realpath ${SCRIPT_DIR}/../../infra/ansible/roles/)
 EXPORTED_ROLES_DIR=$(realpath ${SCRIPT_DIR}/roles/)
 
+echo "Exported roles: ${EXPORTED_ROLES_DIR}"
+echo "Uno roles: ${UNO_ROLES_DIR}"
+
 if [[ -d ${EXPORTED_ROLES_DIR} ]]; then
     ANSIBLE_ROLES=${EXPORTED_ROLES_DIR}
 elif [[ -d ${UNO_ROLES_DIR} ]]; then
@@ -17,9 +20,9 @@ else
 fi
 PLAYBOOK=$(realpath ${ANSIBLE_ROLES}/../playbooks/dev-environment/laptop.yaml)
 
-sudo apt-add-repository ppa:ansible/ansible
+sudo apt-add-repository --yes ppa:ansible/ansible
 sudo apt update
-sudo apt-get install ansible
+sudo apt-get install --yes ansible
 
 # Later we'll do something like this, but we need to have a way to generate a top-level
 # requirements.yaml from all others and export only the subset used here
