@@ -10,14 +10,15 @@
   become_user: '{{ ansible_user_id }}'
   when: ansible_facts['distribution'] == 'Linux Mint'
 
-# - name: setup favorites (ubuntu)
-#   dconf:
-#     key: "/org/gnome/shell/favorite-apps"
-#     state: present
-#     value: "['com.gexperts.Tilix.desktop']"
-#   when: ansible_facts['distribution'] == 'Ubuntu'
-
 - name: setup favorites (ubuntu)
-  shell: gsettings set org.gnome.shell favorite-apps "['com.gexperts.Tilix.desktop']"
+  dconf:
+    key: "/org/gnome/shell/favorite-apps"
+    state: present
+    value: "['com.gexperts.Tilix.desktop']"
   become_user: '{{ ansible_user_id }}'
   when: ansible_facts['distribution'] == 'Ubuntu'
+
+# - name: setup favorites (ubuntu)
+#   shell: gsettings set org.gnome.shell favorite-apps "['com.gexperts.Tilix.desktop']"
+#   become_user: '{{ ansible_user_id }}'
+#   when: ansible_facts['distribution'] == 'Ubuntu'
