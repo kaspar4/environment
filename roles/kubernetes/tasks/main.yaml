@@ -26,3 +26,50 @@
     src: "/usr/local/bin/kind-{{ kind_version }}"
     dest: "/usr/local/bin/kind"
     state: link
+
+- name: Get latest kubectl version
+  shell: curl -L -s https://dl.k8s.io/release/stable.txt
+  register: kubectl_get_latest_version
+
+- name: Download kubectl binary
+  ansible.builtin.get_url:
+    url: "https://storage.googleapis.com/kubernetes-release/release/{{ kubectl_get_latest_version.stdout_lines[0] }}/bin/linux/amd64/kubectl"
+    dest: "/usr/local/bin/kubectl"
+    mode: 0755
+
+- name: Unarchive a file that needs to be downloaded (added in 2.0)
+  unarchive:
+    src: https://github.com/kubernetes-sigs/krew/releases/download/v0.4.3/krew-linux_amd64.tar.gz
+    dest: /usr/local/bin
+    mode: 0755
+    remote_src: yes
+# TODO: not available in ansible 2.10. For now accept we also extract LICENSE in /usr/local/bin
+    # include:
+    #   - krew-linux_amd64
+
+- name: Create a symbolic link
+  ansible.builtin.file:
+    src: /usr/local/bin/krew-linux_amd64
+    dest: /usr/local/bin/kubectl-krew
+    state: link
+
+# TODO add export PATH="${PATH}:${HOME}/.krew/bin"
+- name: Install Krew plugins
+  shell: "kubectl krew install {{ item }}"
+  become: yes
+  become_user: '{{ ansible_user_id }}'
+  with_items:
+    - ns
+    - ctx
+    - example
+    - flame
+    - explore
+    - get-all
+    - graph
+    - neat
+    - pod-inspect
+    - pod-lens
+    - prune-unused
+    - stern
+    - view-secret
+    - whoami
