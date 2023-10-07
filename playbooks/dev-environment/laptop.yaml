@@ -8,6 +8,7 @@
   - { role: sudo, become: yes }
   - { role: fonts, tags: [ 'font' ] }
   - { role: zsh, become: yes, tags: [ 'terminal' ] }
+  - { role: terminal, become: yes, tags: [ 'terminal' ] }
   #   - { role: api, become: yes, tags: [ 'api', 'development' ] }
   #   - { role: browsers, become: yes, tags: [ 'browser' ] }
   #   - { role: cloud, become: yes, tags: [ 'cloud' ] }
@@ -22,7 +23,6 @@
   #   - { role: productivity, become: yes, tags: [ 'productivity' ] }
   ## - { role: diodonfrost.terraform, become: yes }
   ## - { role: python, become: yes, tags: [ 'development', 'python' ] }
-  ## - { role: terminal, become: yes, tags: [ 'terminal' ] }
   ## - { role: kubernetes, become: yes, tags: [ 'kubernetes' ] }
   ## - { role: nyxt, become: yes }
   ## - { role: emacs, tags: ['emacs'] }

@@ -9,17 +9,6 @@
     - curl
     - zsh
 
-# - name: set up zsh for user
-#   become: no
-#   vars:
-#     the_user: "{{ ansible_user_id }}"
-#   tasks:
-#     - name: change user shell to zsh
-#       become: yes
-#       user:
-#         name: "{{ the_user }}"
-#         shell: /usr/bin/zsh
-
 - name: Install antigen
   get_url:
     url: https://git.io/antigen
@@ -30,14 +19,6 @@
   user:
     name: "{{ ansible_user_id }}"
     shell: "/usr/bin/zsh"
-
-
-# - name: Install oh-my-zsh
-#   git:
-#     repo: https://github.com/robbyrussell/oh-my-zsh
-#     dest: ~/.oh-my-zsh force=yes
-#     single_branch: yes
-#     version: master
 
 - name: Back up existing ~/.zshrc
   shell: if [ -f ~/.zshrc ]; then mv ~/.zshrc ~/.zshrc.bak ; fi
@@ -54,8 +35,6 @@
     src: files/dot_zshrc
     dest: "{{ home_dir }}/.zshrc"
 
-# - name: Copy my .zshrc
-#   command: curl -LSso ~/.zshrc https://raw.github.com/ChengLong/configs/master/.zshrc
 - name: clone oh-my-zsh
   tags:
     # Suppress warning: [ANSIBLE0006] git used in place of git module
