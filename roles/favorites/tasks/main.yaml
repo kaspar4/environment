@@ -1,0 +1,13 @@
+- name: setup favorites (linux mint)
+  dconf:
+    key: "/org/cinnamon/favorite-apps"
+    state: present
+    value: "['mintinstall.desktop', 'cinnamon-settings.desktop', 'tilix.desktop']"
+  when: ansible_facts['distribution'] == 'Linux Mint'
+
+- name: setup favorites (ubuntu)
+  dconf:
+    key: "/org/gnome/shell/favorite-apps"
+    state: present
+    value: "['com.gexperts.Tilix.desktop']"
+  when: ansible_facts['distribution'] == 'Ubuntu'
