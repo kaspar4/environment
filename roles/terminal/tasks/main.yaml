@@ -18,7 +18,7 @@
   ansible.builtin.copy:
     src: files/tilix.desktop
     dest: "{{ home_dir }}/Desktop/tilix.desktop"
-    
+
 - name: Install oh-my-posh
   get_url:
     url: https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/posh-linux-amd64
@@ -29,7 +29,7 @@
   file:
     path: "{{ home_dir }}/.poshthemes"
     state: directory
-    
+
 - name: Install oh my posh themes
   unarchive:
     src: https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/themes.zip
@@ -39,13 +39,6 @@
     group: "{{ ansible_user_id }}"
     mode: "0644"
     remote_src: yes
-  
-- name: Install font 
-  shell: "{{ home_dir }}/nerd-fonts/install.sh Meslo"
-  become: yes
-  become_user: '{{ ansible_user_id }}'
-  args:
-    creates: "{{ home_dir }}/.local/share/fonts/NerdFonts/Meslo LG M Regular Nerd Font Complete.ttf"
 
 - name: Rehash font cache
   command: fc-cache -fv
