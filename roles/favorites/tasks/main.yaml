@@ -7,6 +7,7 @@
     key: "/org/cinnamon/favorite-apps"
     state: present
     value: "['mintinstall.desktop', 'cinnamon-settings.desktop', 'tilix.desktop']"
+  become_user: '{{ ansible_user_id }}'
   when: ansible_facts['distribution'] == 'Linux Mint'
 
 # - name: setup favorites (ubuntu)
@@ -18,4 +19,5 @@
 
 - name: setup favorites (ubuntu)
   shell: gsettings set org.gnome.shell favorite-apps "['com.gexperts.Tilix.desktop']"
+  become_user: '{{ ansible_user_id }}'
   when: ansible_facts['distribution'] == 'Ubuntu'
