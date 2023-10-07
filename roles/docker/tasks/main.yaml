@@ -1,0 +1,35 @@
+- name: Extract distribution base name (works on linux mint as well)
+  command: grep -oP '{{ "VERSION" if ansible_distribution == "Debian" else "UBUNTU" }}_CODENAME=\K.*' /etc/os-release
+  register: distro
+  changed_when: False
+
+- name: Add gpg signing key for socker repository
+  ansible.builtin.apt_key:
+    url: "https://download.docker.com/linux/ubuntu/gpg"
+    state: present
+
+- name: Add specified repository into sources list
+  ansible.builtin.apt_repository:
+    repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ distro.stdout }} stable
+    state: present
+
+- name: Install Docker
+  apt:
+    name: "{{ packages }}"
+  vars:
+    packages:
+    - docker-ce
+    - docker-ce-cli
+    - containerd.io
+    - python3-docker # required by ansible docker modules
+
+- name: Create docker group
+  group:
+    name: docker
+
+# TODO: either find a way to make the group effective or a way to tell the user they need to logout
+- name: Allow running Docker without sudo
+  user:
+    name: "{{ ansible_user_id }}"
+    groups: docker
+    append: yes

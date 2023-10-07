@@ -9,6 +9,8 @@
   - { role: fonts, tags: [ 'font' ] }
   - { role: zsh, become: yes, tags: [ 'terminal' ] }
   - { role: terminal, become: yes, tags: [ 'terminal' ] }
+  - { role: docker, become: yes }
+  - { role: kubernetes, become: yes }
   # Leave this last for TODO: collect things we install and want in favourites
   - { role: favorites, become: yes}
   #   - { role: api, become: yes, tags: [ 'api', 'development' ] }

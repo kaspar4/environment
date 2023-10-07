@@ -1,0 +1,28 @@
+---
+
+- name: Get the version information of the latest release of kind
+  uri:
+    url: "{{ kind_github_api }}/releases/latest"
+    return_content: true
+    body_format: json
+  register: kind_get_latest_version
+
+- name: Ensure the kind_version variable is set
+  set_fact:
+    kind_version: "{{ kind_get_latest_version.json.tag_name | regex_replace('^v', '') }}"
+
+- name: Get the binary path for kind
+  set_fact:
+    kind_binary_path: "v{{ kind_version }}/kind-linux-amd64"
+
+- name: Ensure kind binary is downloaded
+  get_url:
+    url: "{{ kind_release_baseurl }}/{{ kind_binary_path }}"
+    dest: "/usr/local/bin/kind-{{ kind_version }}"
+    mode: 0755
+
+- name: Ensure kind package is symlinked
+  file:
+    src: "/usr/local/bin/kind-{{ kind_version }}"
+    dest: "/usr/local/bin/kind"
+    state: link
