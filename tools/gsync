@@ -9,6 +9,7 @@ from rich.traceback import install as install_rich_traceback
 from textwrap import dedent
 import atexit
 import click
+import getpass
 import git
 import logging
 import os
