@@ -92,11 +92,14 @@ def get_context(args):
       username = getpass.getuser()
       home_directory = os.path.expanduser('~')
       # use identity from config instead of vdesk.pub
-      conn.connect(context["host"], username=username, key_filename=f"${home_directory}/.ssh/vdesk.pub")
+      host = context["host"]
+      identity = f"{home_directory}/.ssh/vdesk"
+      logging.info(f"Connecting to {host} using identity in {identity}")
+      conn.connect(host, username=username, key_filename=identity)
       atexit.register(lambda: conn.close())
    except (paramiko.SSHException, socket.error):
-      logging.fatal(f"Cannot connect to {context['host']}")
-      sys.exit(1)
+      logging.fatal(f"Cannot connect to {host}")
+#      sys.exit(1)
 
    context["ssh"] = conn
    context["local_repo"] = get_repo()
@@ -223,18 +226,23 @@ def push_local_state(context):
    sync_uuid = str(uuid.uuid4())
 
    git = repo.git
+   logging.info("Stashing local changes")
    git.stash("save", "--keep-index", sync_uuid)
    # typically '0'
    stash_index = get_stash_index(git, sync_uuid)
+   if stash_index is None:
+      logging.info("Nothing to stash")
 
    logging.error("TODO: switch to whatever the default branch is on the remote")
    ssh_exec(context, "git checkout master")
 
    new_branch_name = sync_uuid
+   logging.info(f"Creating ephemeral branch {new_branch_name}")
    new_branch = repo.create_head(new_branch_name)
    new_branch.checkout()
 
    if stash_index is not None:
+      logging.info("Applying stash")
       git.stash("apply", stash_index)
       git.add("--all")
       git.commit("-m", "gsync")
@@ -246,8 +254,10 @@ def push_local_state(context):
 
    ssh_exec(context, f"git checkout {active_branch.name}")
 
+   logging.info("Checking out original branch")
    active_branch.checkout()
    if stash_index is not None:
+      logging.info("Applying and dropping stash")
       git.stash("pop", "--index", stash_index)
    repo.delete_head(new_branch, force=True)
 
@@ -361,7 +371,10 @@ def is_port_open(host, port=22, timeout=5):
         sock.close()
 
 def ensure_vdesk(context):
+   host = context["host"]
+   logging.info(f"Ensure host {host} is reachable")
    if not is_port_open(context["host"]):
+      logging.fatal(f"Host {host} not listening on port 22")
       sys.exit(1)
 
 @timed
