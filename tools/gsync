@@ -33,8 +33,7 @@ import yaml
 #   host: "vdesk"
 #   repo: "/home/mvitale/uno_sync"
 
-# add suppress=[click]
-install_rich_traceback(show_locals=True)
+install_rich_traceback(show_locals=False, suppress=[click])
 
 console = Console()
 
@@ -89,7 +88,10 @@ def get_context(args):
 
    conn.set_missing_host_key_policy(paramiko.AutoAddPolicy())
    try:
-      conn.connect(context["host"], username='mvitale', key_filename="/home/mav/.ssh/vdesk.pub")
+      username = getpass.getuser()
+      home_directory = os.path.expanduser('~')
+      # use identity from config instead of vdesk.pub
+      conn.connect(context["host"], username=username, key_filename=f"${home_directory}/.ssh/vdesk.pub")
       atexit.register(lambda: conn.close())
    except (paramiko.SSHException, socket.error):
       logging.fatal(f"Cannot connect to {context['host']}")
@@ -231,9 +233,10 @@ def push_local_state(context):
    new_branch = repo.create_head(new_branch_name)
    new_branch.checkout()
 
-   git.stash("apply", stash_index)
-   git.add("--all")
-   git.commit("-m", "gsync")
+   if stash_index is not None:
+      git.stash("apply", stash_index)
+      git.add("--all")
+      git.commit("-m", "gsync")
 
    try:
       push_info = remote.push(refspec=f'{new_branch_name}:{active_branch.name}', force=True)
@@ -243,7 +246,8 @@ def push_local_state(context):
    ssh_exec(context, f"git checkout {active_branch.name}")
 
    active_branch.checkout()
-   git.stash("pop", "--index", stash_index)
+   if stash_index is not None:
+      git.stash("pop", "--index", stash_index)
    repo.delete_head(new_branch, force=True)
 
 @timed
